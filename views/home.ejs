@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>All blogs</title>
+		<link rel="stylesheet" href="/style.css" />
+		<link rel="stylesheet" href="/header.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+	</head>
+	<body>
+		<!-- Nhúng file header.ejs vào để tái sử dụng -->
+		
+		<%- include('header') %>
+		
+		
+
+		<main>
+			<!-- <div id="sort"><h3>All blogs: </h3><a href="?sort=asc">Ascending</a> <a href="?sort=desc">Descending</a></div> -->
+			<% blogs.forEach((blog) => { %>
+				<!-- <p> <%= blog.title %> </p> -->
+				<div class="box">
+					<div class="box-header">
+						<p class="id">#<%= blog.id %></p>
+						<img class="image" src="<%= blog.thumbnail %>" >
+					</div>
+					<div class="box-main">
+						<h3 class="title"><%= blog.title %></h3>
+						<p class="author">Author: <%= blog.author %></p>
+						<p class="description"><%= blog.description %></p>
+					</div>
+					<div class="box-footer">
+						<div class="date-container"><span class="published-date"><%= blog.published_date %></span></div>
+					 	<div class="action-container">
+							<span class="view"><a href="/blogs/<%= blog.id %>">View</a></span>
+							<span class="edit"><a href="/blogs/<%= blog.id %>/edit">Edit</a></span>
+							<span class="delete"><button class="delete-btn" id="btn-<%= blog.id %>">Delete</button></span>
+						</div>
+					</div>
+				</div>
+			<% }) %>
+		</main>
+		<script>
+			
+			
+			const deleteBtns = document.getElementsByClassName('delete-btn')
+			for (let deleteBtn of deleteBtns){
+				deleteBtn.addEventListener("click", (event) => {
+					const blogId = deleteBtn.id.split('-')[1]
+					deleteBlog(blogId)
+				})
+			}
+			
+			async function deleteBlog(id) {
+				fetch('api/blogs/' + id,  {
+					method: 'DELETE'
+				})
+				window.location.href = '/'
+			}
+		</script>
+	</body>
+</html>

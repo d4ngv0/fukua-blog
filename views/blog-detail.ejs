@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="/blog.css" />
+		<link rel="stylesheet" href="/header.css">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+		<title>Blog <%= blog.title %></title>
+	</head>
+	<body>
+		<%- include('header') %>
+		<main>
+			<div id="box-header">
+				<h2 id="title">#<%= blog.id %> <%= blog.title %></h2>
+			</div>
+			<span id="info">
+				<span id="author">Author: <%= blog.author %></span> <span id="published-date"> <%= blog.published_date %></span>
+			</span>
+			<div id="box-main">
+				<img id="image" src="<%= blog.thumbnail %>">
+				<p id="description"><%= blog.description %></p>
+				<p id="content"><%= blog.content %></p>
+			</div>
+		</main>
+		<div id="comment-box">
+			<div id="create-comment">
+				<form>
+					<div id="comment-author-container"><input id="comment-author-input" placeholder="Author" name="author"><input id="comment-to-input" placeholder="To" type="number" name="to"></div>
+					<div id="create-comment-container"><textarea id="comment-input" placeholder="Comment"></textarea></div>
+					<span id="button-container"><button id="post-btn">Post</button></span>
+				</form>
+			</div>	
+			<div id="comment-list">
+				<% comments.forEach(comment => { %>
+					<div class="comment-box-item">
+						<div class="comment-header"><h4 class="comment-id">#<%= comment.id %><% if (comment.to != 0) { %> to #<%= comment.to %><% } %></h4></div>
+						<div class="comment-main"><p class="comment-content"><%= comment.content %></p></div>
+						<div class="comment-footer"><p class="comment-author"><%= comment.author %></p><div class="button-footer-container"><button class="reply-btn" id="reply-<%= comment.id %>">Reply</button><button class="delete-btn" id="delete-<%= comment.id %>">Delete</button></div></div>
+					</div>
+				<% }) %>
+			</div>		
+		</div>
+		
+		<script>
+		// console.log(<%= blog.id %>, 'halo');
+
+		const replyBtns = document.getElementsByClassName('reply-btn')
+		// console.log(replyBtns)
+		for (let replyBtn of replyBtns){
+			
+			replyBtn.addEventListener('click', e => {
+				const commentId = replyBtn.id.split('-')[1]
+				const toInput = document.querySelector('input[name="to"]')
+				const commentContent = document.querySelector('textarea')
+				commentContent.focus()
+				toInput.value = commentId
+				// console.log(commentId)
+			})
+		}
+
+		const deleteBtns = document.getElementsByClassName('delete-btn')
+		// console.log(replyBtns)
+		for (let deleteBtn of deleteBtns){
+			
+			deleteBtn.addEventListener('click', e => {
+				const commentId = deleteBtn.id.split('-')[1]
+				deleteComment(commentId)
+				// console.log(commentId)
+
+			})
+		}
+
+		async function deleteComment(id) {
+				fetch('../api/comments/' + id,  {
+					method: 'DELETE'
+				})
+				location.reload()
+			}
+
+		document.querySelector('form').addEventListener('submit', async e => {
+			e.preventDefault()
+			
+			// Lấy giá trị của các input
+			const author = document.querySelector('input[name="author"]').value
+			const to = document.querySelector('input[name="to"]').value
+			const content = document.querySelector('textarea').value
+			const blogId = Number('<%= blog.id %>');
+			
+			
+			
+			// console.log(date);
+			// Gửi request tới route /api/users do Json Server xử lý để tạo mới user
+			await fetch('http://localhost:3000/api/comments/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				// body phải là chuỗi JSON
+				body: JSON.stringify({
+					author,
+					blogId,
+					to,
+					content
+				}),
+			})
+
+			// Sau khi tạo mới user xong, chuyển hướng về trang chủ
+			location.reload()
+		})
+		</script>
+	</body>
+</html>

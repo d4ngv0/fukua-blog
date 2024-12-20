@@ -1,0 +1,41 @@
+header {
+    background-color: #fff;
+    text-align: center;
+    display: flex;
+    align-self: flex-start;
+    flex-direction: column;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+
+}
+
+nav a {
+    margin: 0 8px;
+    /* background-color: #000; */
+    color: #000;
+    padding: 8px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 800;
+    border-radius: 8px;
+}
+
+nav a:hover {
+    color: #808080;
+}
+
+hr {
+    width: 70%;
+    border: 2px solid #444;
+}
+
+#title-name {
+    font-size: 24px;
+    /* font-weight: 800px; */
+}
+

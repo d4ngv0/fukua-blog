@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="/newBlog.css">
+		<link rel="stylesheet" href="/header.css">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+		<title>Update blog</title>
+	</head>
+	<body>
+		<%- include('header') %>
+		<main>
+			<form>
+				<span class="input-container"><label>Title: </label><input type="text" name="title" value="<%= blog.title %>" class="input"/></span><br />
+				<span class="input-container"><label>Author: </label><input type="text" name="author" value="<%= blog.author %>" class="input"/></span><br />
+				<span class="input-container"><label>Thumbnail: </label><input type="text" name="thumbnail" value="<%= blog.thumbnail %>" class="input"/></span><br />
+				<span class="input-container"><label>Description </label><input type="text" name="description" value="<%= blog.description %>" class="input"/></span><br />
+				<div class="textarea-container"><label>Content: </label><textarea type="text" name="thumbnail" class="textarea"><%= blog.content %></textarea></div><br />
+				<button id="submit-btn">Submit</button>
+			</form>
+		</main>
+	</body>
+
+	<script>
+		// Tương tự như file create-user.ejs, sau khi người dùng submit form, gửi request PUT tới route /api/users/:id để cập nhật thông tin user
+		
+		document.querySelector('form').addEventListener('submit', async e => {
+			e.preventDefault()
+			
+			// Lấy giá trị của các input
+			const title = document.querySelector('input[name="title"]').value
+			const description = document.querySelector('input[name="description"]').value
+			const thumbnail = document.querySelector('input[name="thumbnail"]').value
+			const author = document.querySelector('input[name="author"]').value
+			const content = document.querySelector('textarea').value
+			const d = new Date()
+			const published_date = '' + d.getDate() + '/' + d.getMonth() + '/' + d.getFullYear();
+			// console.log(date);
+			// Gửi request tới route /api/users do Json Server xử lý để tạo mới user
+			await fetch('http://localhost:3000/api/blogs/<%= blog.id %>', {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				// body phải là chuỗi JSON
+				body: JSON.stringify({
+					title,
+					thumbnail,
+					description,
+					content,
+					published_date,
+					author,
+				}),
+			})
+
+			// Sau khi tạo mới user xong, chuyển hướng về trang chủ
+			window.location.href = '/'
+		})
+	</script>
+</html>
